@@ -2,8 +2,6 @@ import argparse
 import os
 import turborans
 
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("score", help="Score to add to the history", type=float)
