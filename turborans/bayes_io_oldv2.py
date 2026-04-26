@@ -8,6 +8,7 @@ import random
 
 from bayes_opt import BayesianOptimization
 from bayes_opt import acquisition
+from bayes_opt.event import Events
 
 from sklearn.gaussian_process.kernels import Matern
 
@@ -20,8 +21,8 @@ from turborans.utilities.checks import validate_settings
 
 
 def _load_logs(optimizer, log_path):
-    """Reads a history.json file (one JSON object per line) and registers
-    each point with the optimizer. Replaces the removed bayes_opt.load_logs."""
+    """Replacement for the removed bayes_opt.load_logs. Reads a history.json file
+    (one JSON object per line) and registers each point with the optimizer."""
     with open(log_path, "r") as f:
         for line in f:
             line = line.strip()
@@ -34,12 +35,12 @@ def _load_logs(optimizer, log_path):
                 try:
                     optimizer.register(params=params, target=target)
                 except Exception:
-                    pass  # Skip duplicate points silently
+                    # Skip duplicate points silently
+                    pass
 
 
 def _make_acquisition(kind, kappa, xi):
-    """Returns the appropriate acquisition function object.
-    Replaces the removed UtilityFunction class."""
+    """Replacement for UtilityFunction. Returns the appropriate acquisition object."""
     kind = kind.lower()
     if kind == "ucb":
         return acquisition.UpperConfidenceBound(kappa=kappa)
@@ -197,11 +198,11 @@ class optimizer():
         else: 
             self.default_coeffs_given = False
 
-        # Reset optimizer if force_restart is True.
+        # Reset optimizier if force_restart is True.
         if self.settings['force_restart']: 
             reset(self.directory)
 
-        # Get bayesian_optimizer based on current settings.
+        # Get bayesian_optimizer and utility based on current settings.
         if not self.settings['json_mode']:
             self._get_bayesian_optimizer()
                     
@@ -220,6 +221,7 @@ class optimizer():
                     f'The number of coefficients might have changed.'
                 )
         else:
+            # If no history file exists, we assume that this is the first iteration.
             logging.info(f'No history file exists at {history_path}, assumed to be starting fresh')
     
     def _infer_current_iteration(self):
@@ -228,11 +230,12 @@ class optimizer():
         self.iter = iter
         return iter
     
-    def _set_mode(self, mode=None):
+    def _set_mode(self, mode = None):
         """Set the optimizer mode based on iteration number."""
         self._infer_current_iteration()
         if mode is None:
             if self.iter == 0:
+                # If it is the first iteration, either suggest defaults (if they are given) or suggest the first sampled point.
                 if self.default_coeffs_given and self.settings['start_with_defaults_if_given']:
                     self.mode = 'default_coefficient'
                 else:
@@ -242,76 +245,106 @@ class optimizer():
             else:
                 self.mode = 'bayesian_optimization'
         else:
+            # If we manually set the mode, we don't try to infer it.
             self.mode = mode
 
     def _generate_samples(self, n_samples):
-        """Generates sobol-sequence samples for each coefficient."""
+        """ Generated sobol-sequence samples for each coefficient."""
         qrng = qmc.Sobol(d=len(self.coeffs['bounds'].keys()), seed=self.settings['random_state'])
         self.samples = qrng.random(n=2**(int(np.log2(n_samples))+1))
-        for i, bounds in enumerate(self.coeffs['bounds'].values()):
+        for i,bounds in enumerate(self.coeffs['bounds'].values()):
             self.samples[:,i] = bounds[0] + self.samples[:,i]*(bounds[1]-bounds[0])
         self.samples_generated = True
 
     def _suggest_default(self):
-        """Returns the default coefficients provided."""
+        """ Returns the default coefficients provided."""
         return self.coeffs['default']
            
     def _suggest_sample(self, index):
-        """Returns a sobol-sequence sample for each coefficient."""
+        """ Returns a sobol-sequence sample for each coefficient"""
+
+        # In some cases, we might ask for more samples than initially generated, so we need to generate an additional one
         if index >= len(self.samples):
             logging.info(f'Generating more samples, since index {index} is beyond len(samples) = {len(self.samples)}')
             self._generate_samples(len(self.samples)+1)
+        
+        # Convert the samples array into a dict of coefficient suggestions
         suggestion = dict(zip(self.coeffs['bounds'].keys(), self.samples[index]))
         return suggestion
 
     def _suggest_bayesian_optimization(self):
-        """Suggests a point using the bayesian optimizer."""
+        """ Suggests a point using the bayesian optimizer."""
+
         if self.iter < 5: 
+            # Strange behavior can occur when the bayesian optimizer has too few initial samples are available.
             raise ValueError("Bayesian optimizer should not be run without at least 5 initial samples")
 
+        # Build acquisition function from settings (replaces deprecated UtilityFunction)
         acq_function = _make_acquisition(
             kind=self.settings['bo_utility_kind'],
             kappa=self.settings['bo_kappa'],
             xi=self.settings['bo_xi'],
         )
+
         return self.bayesian_optimizer.suggest(acq_function)
 
-    def suggest(self, mode=None):
-        """Primary suggestion I/O method."""
+    def suggest(self, mode = None):
+        """ Primary suggestion I/O method. Suggests the next coefficient. When mode = None,automatically determines appropriate mode. Writes to suggestion.json if in json_mode. If json_mode is False, then returns the suggestion as a dict."""
         if self.settings['json_mode']:
             return self._suggest_to_json(mode)
         else: 
             return self._suggest(mode)
         
     def _suggest_to_json(self, mode):
-        """Writes suggestion to suggestion.json."""
+        """ Writes suggestion to suggestion.json."""
+
+        # Condition bayesian optimizer object with all available points
         self._get_bayesian_optimizer()
+
+        # Gets the suggestion as a dict
         suggestion = self._suggest(mode)
+
+        # Write dict to json
         logging.info(f'Suggesting to json')
         write_json(self.directory, suggestion, "suggestion.json")
-        write_json(self.directory, {"mode": self.mode}, "mode.json")
+        write_json(self.directory, {"mode":self.mode}, "mode.json")
         return suggestion
         
     def _suggest(self, mode):
-        """Core suggestion method."""
+        """ Core suggestion method.
+        mode is usually None, and then self.mode will be inferred in self._set_mode(None). After inferring the mode, then the suggestion
+        made will depend on the mode ('default_coefficient', 'sampling_parameters', or 'bayesian_optimization')
+        """
         self._set_mode(mode)
         logging.info(f'Suggesting new value, current mode: {self.mode}')
 
+        # Default coefficient suggestion
         if self.mode == 'default_coefficient':
             return self._suggest_default()
+        
+        # Sampling parameters suggestion
         elif self.mode == 'sampling_parameters':
             if not self.samples_generated:
+                # Generate samples if they don't exist
                 self._generate_samples(self.settings['n_samples'])
             return self._suggest_sample(self.iter)
+        
         else:
             return self._suggest_bayesian_optimization()
 
-    def register_score(self, score, coefficients=None):
-        """Primary score registration I/O method."""
+    def register_score(self, score, coefficients = None):
+        """ Primary score registration I/O method. Registers a given score with a coefficient set.
+        
+        Score is mandatory. If json_mode = True, do not supply the coefficients argument. 
+        If coefficients is None, then the coefficients will be read from suggestion.json (only valid for json_mode = True).
+        If json_mode = False, then the coefficients must be supplied.
+        This method determines whether to call _register_score_json or register_score, depending on whether json_mode is used.
+        """
         if coefficients is None:
             if not self.settings['json_mode']:
                 raise ValueError('You must provide a corresponding suggestion to be registered, unless turbo-RANS is in json_mode')
             else:
+                # Suggestion is loaded from current json file.
                 suggestion = load_json(self.directory, "suggestion.json")
                 self._register_score_json(score, suggestion)
         else:
@@ -319,53 +352,47 @@ class optimizer():
                 self._register_score_json(score, coefficients)
             else:
                 self._register_score(score, coefficients)
-                self._update_database(score, coefficients)
+                self._update_database(score,coefficients)
 
     def _register_score_json(self, score, suggestion):
-        """Registers the score and appends the result to history.json manually.
-        subscribe/Events have been removed in bayes_opt v3.x, so we write the
-        log entry directly after registering."""
         self._get_bayesian_optimizer()
-        history_path = os.path.join(self.directory, "history.json")
-        if not os.path.exists(history_path):
-            logging.info(f'No history file exists at {history_path}, creating and registering first point')
-        logging.info(f'Registering score in {history_path}')
+        """ Registers the score in the bayesian_optimizer object after subscribing the object to a log called history.json."""
+        if not os.path.exists(os.path.join(self.directory,"history.json")):
+            logging.info(f'No history file exists at {os.path.join(self.directory,"history.json")}, creating and registering first point')
+        logger = newJSONLogger(path=os.path.join(self.directory,"history.json"))
+        self.bayesian_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
+        logging.info(f'Registering score in {os.path.join(self.directory,"history.json")}')
         try:
             self._register_score(score, suggestion)
         except Exception:
-            suggestion = {k: v + random.uniform(0.0000001, 0.000001) for k, v in suggestion.items()}
+            # See issues associated with Bayesian Optimization library, sometimes optimizer attempts to probe duplicate point
+            suggestion = {k: v+random.uniform(0.0000001, 0.000001) for k,v in suggestion.items()}
             logging.warning('Could not register score, maybe a duplicate point. Adding small random value to search point.')
             self._register_score(score, suggestion)
-
-        # Manually append to history.json (replaces the old subscribe/Events pattern)
-        entry = {"target": score, "params": suggestion}
-        with open(history_path, "a") as f:
-            f.write(json.dumps(entry) + "\n")
-
+    
     def _register_score(self, score, suggestion):
-        """Registers the score in the bayesian_optimizer object."""
+        """ Registers the score in the bayesian_optimizer object."""
         self.bayesian_optimizer.register(params=suggestion, target=score)
 
     def _update_database(self, score, coefficients):
-        """Updates a database tracking optimization info. Only valid for json_mode = False."""
+        """ Updates a database tracking more detailed information about the optimization. Currently only valid for json_mode = False."""
         if self.settings['json_mode'] is True:
             raise ValueError("update_database should only be used for non-json mode")
 
         if not self.database_created:
-            self.database = {'iteration': [], 'mode': [], 'target': []}
+            self.database = {'iteration':[],'mode':[],'target':[]}
             [self.database.update({key: []}) for key in coefficients.keys()]
             self.database_created = True
         self.database['iteration'].append(self.iter)
         self.database['mode'].append(self.mode)
-        [self.database[key].append(value) for key, value in coefficients.items()]
+        [self.database[key].append(value) for key,value in coefficients.items()]
         self.database['target'].append(score)
 
     def _get_bayesian_optimizer(self):
-        self.bayesian_optimizer = get_optimizer(
-            coeff_bounds=self.coeffs['bounds'],
-            relative_lengthscale=self.settings['kernel_relative_lengthscale'],
-            relative_lengthscale_bounds=self.settings['kernel_relative_lengthscale_bounds'],
-            nu=self.settings['kernel_nu'],
-            random_state=self.settings['random_state']
-        )
+        self.bayesian_optimizer = get_optimizer(coeff_bounds=self.coeffs['bounds'],
+                                                            relative_lengthscale=self.settings['kernel_relative_lengthscale'],
+                                                            relative_lengthscale_bounds=self.settings['kernel_relative_lengthscale_bounds'],
+                                                            nu=self.settings['kernel_nu'],
+                                                            random_state=self.settings['random_state']
+                                                            )
         self._condition_bayesian_optimizer()
