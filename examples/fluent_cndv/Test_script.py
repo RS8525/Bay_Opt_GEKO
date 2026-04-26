@@ -19,7 +19,7 @@ def setCoeff(coeff):
     
 
 def Run():
-    subprocess.run([f"C:/Program Files/ANSYS Inc/v232/Framework/bin/Win64/RunWB2.exe", "-B", "-R" f"{fl.journal_file}"])
+    subprocess.run([f"C:/Program Files/ANSYS Inc/ANSYS Student/v261/Framework/bin/Win64/RunWB2.exe", "-B", "-R" f"{fl.journal_file}"])
 
 def run_coeff(coeff:dict):
     setCoeff(coeff)
