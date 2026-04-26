@@ -1,19 +1,19 @@
 #file locations
 
 #Journal File data
-journal_file = r"C:\Users\nikhila.kalia\Desktop\Fluent\Diverging channel\profiles\journal_20h_rerun.wbjn"
+journal_file = r"C:\Users\Goncalo\Desktop\TUM\CS\rep\Bay_Opt_GEKO\examples\fluent_cndv\journal_20h_rerun.wbjn"
 
 #Rans tuning directory 
-tuner = "C:/Users/nikhila.kalia/Desktop/Fluent/python_script/tuner"
+tuner = r"C:\Users\Goncalo\Desktop\TUM\CS\scripts"
 
 #figure saves
-figs = "C:/Users/nikhila.kalia/Desktop/Fluent/figures"
+figs = r"C:\Users\Goncalo\Desktop\TUM\CS\graficos"
 
 #dns file location
-dns = r"C:\Users\nikhila.kalia\Desktop\Fluent\Diverging channel\DNS Data\statistics_streamwise.dat"
+dns = r"C:\Users\Goncalo\Desktop\TUM\CS\rep\para-database-for-PIML\pehill-5-cases-DNS\case_0p8\dns-data\mean_files.dat"
 
 #sim data location 
-sim = r"C:\Users\nikhila.kalia\Desktop\Fluent\Diverging channel\Fluent data\data run\pressure_20h.csv"
+sim = r"C:\Users\Goncalo\Desktop\TUM\CS\Sim\sim.csv"
 
 #Default coeff file location
 baseline = r"C:\Users\nikhila.kalia\Desktop\Fluent\Diverging channel\Fluent data\data run\baseline_pressure.csv"

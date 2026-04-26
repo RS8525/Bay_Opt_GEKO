@@ -1,3 +1,5 @@
+import sys
+sys.path.append(r"C:\Users\Goncalo\Desktop\TUM\CS\rep\turbo-rans")
 import turborans
 import subprocess
 import numpy as np

@@ -1,8 +1,10 @@
+import sys
+sys.path.append(r"C:\Users\Goncalo\Desktop\TUM\CS\rep\turbo-rans")
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import file_locations as fl
-from turborans.loss_functions.GEDCP import gedcp
+from turborans.objective_functions.GEDCP import gedcp
 import matplotlib as mpl
 mpl.rcParams['lines.linewidth'] = 1.0
 mpl.rcParams['axes.linewidth'] = 0.5 
