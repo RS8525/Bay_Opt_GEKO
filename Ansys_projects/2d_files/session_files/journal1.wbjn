@@ -1,0 +1,36 @@
+# encoding: utf-8
+# 2026 R1
+SetScriptVersion(Version="26.1.174")
+DesignModeler.SetGeometryEditorToSpaceClaim()
+RunScript(FilePath=GetAbsoluteUserPathName("SS 26/Case Studies Turbulence/Turbo rans/Periodic hill/ansys/mesh+geo_files/session_files/journal1.wbjn"))
+system1 = GetSystem(Name="FFF")
+setup1 = system1.GetContainer(ComponentName="Setup")
+setup1.SendCommand(Command='(cx-gui-do cx-activate-tab-index "NavigationPane*Frame1(TreeTab)" 0)(cx-gui-do cx-activate-tab-index "NavigationPane*Frame1(TreeTab)" 1)(cx-gui-do cx-activate-item "Messages*PanelButtons*PushButton1(Close)")')
+geometry1 = system1.GetContainer(ComponentName="Geometry")
+geometry1.Edit(IsSpaceClaimGeometry=True)
+template1 = GetTemplate(
+    TemplateName="Fluid Flow",
+    Solver="CFX")
+system2 = template1.CreateSystem(
+    Position="Right",
+    RelativeTo=system1)
+system2.Delete()
+template2 = GetTemplate(TemplateName="Fluid Flow")
+system3 = template2.CreateSystem(
+    Position="Right",
+    RelativeTo=system1)
+geometry2 = system3.GetContainer(ComponentName="Geometry")
+geometry2.Edit(IsSpaceClaimGeometry=True)
+geometry2.Exit()
+meshComponent1 = system3.GetComponent(Name="Mesh")
+meshComponent1.Refresh()
+mesh1 = system3.GetContainer(ComponentName="Mesh")
+mesh1.Edit()
+mesh1.Exit()
+geometry2.Edit(IsSpaceClaimGeometry=True)
+geometry1.Exit()
+geometry2.Exit()
+meshComponent1.Refresh()
+mesh1.Edit()
+mesh1.Exit()
+Save(Overwrite=True)

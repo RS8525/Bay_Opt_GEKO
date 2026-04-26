@@ -1,0 +1,86 @@
+# encoding: utf-8
+# 2026 R1
+SetScriptVersion(Version="26.1.174")
+system1 = GetSystem(Name="FFF 1")
+setup1 = system1.GetContainer(ComponentName="Setup")
+fluentLauncherSettings1 = setup1.GetFluentLauncherSettings()
+fluentLauncherSettings1.SetEntityProperties(Properties=Set(EnvPath={}))
+setup1.Edit()
+setup1.SendCommand(Command='(cx-gui-do cx-activate-tab-index "NavigationPane*Frame1(TreeTab)" 0)(cx-gui-do cx-activate-tab-index "NavigationPane*Frame1(TreeTab)" 1)')
+setup1.SendCommand(Command="""/file/set-tui-version \"26.1\"
+Graphics driver currently in use: dx11
+(cx-gui-do cx-set-list-tree-selections \"NavigationPane*Frame2*Table1*List_Tree2\" (list \"Solution|Initialization\"))(cx-gui-do cx-set-list-tree-selections \"NavigationPane*Frame2*Table1*List_Tree2\" (list \"Solution|Initialization\"))(cx-gui-do cx-set-list-tree-selections \"NavigationPane*Frame2*Table1*List_Tree2\" (list \"Solution|Initialization\"))(cx-gui-do cx-set-list-tree-selections \"NavigationPane*Frame2*Table1*List_Tree2\" (list \"Solution|Initialization\"))(cx-gui-do cx-set-list-tree-selections \"NavigationPane*Frame2*Table1*List_Tree2\" (list \"Solution|Initialization\"))(cx-gui-do cx-set-list-tree-selections \"NavigationPane*Frame2*Table1*List_Tree2\" (list \"Solution|Initialization\"))""")
+setup1.SendCommand(Command='(cx-gui-do cx-set-list-tree-selections "NavigationPane*Frame2*Table1*List_Tree2" (list "Solution|Initialization"))(cx-gui-do cx-activate-item "NavigationPane*Frame2*Table1*List_Tree2")')
+setup1.SendCommand(Command='(cx-gui-do cx-set-list-tree-selections "NavigationPane*Frame2*Table1*List_Tree2" (list "Solution|Initialization"))(cx-gui-do cx-set-toggle-button2 "Solution Initialization*Table1*ToggleBox3(Initialization Methods)*Standard Initialization" #t)(cx-gui-do cx-activate-item "Solution Initialization*Table1*ToggleBox3(Initialization Methods)*Standard Initialization")(cx-gui-do cx-set-toggle-button2 "Solution Initialization*Table1*ToggleBox3(Initialization Methods)*Hybrid  Initialization" #t)(cx-gui-do cx-activate-item "Solution Initialization*Table1*ToggleBox3(Initialization Methods)*Hybrid  Initialization")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "Solution Initialization*Table1*Frame12*PushButton2(Initialize)")')
+setup1.SendCommand(Command='(cx-gui-do cx-set-list-tree-selections "NavigationPane*Frame2*Table1*List_Tree2" (list "Solution|Run Calculation"))(cx-gui-do cx-set-list-tree-selections "NavigationPane*Frame2*Table1*List_Tree2" (list "Solution|Run Calculation"))(cx-gui-do cx-set-list-tree-selections "NavigationPane*Frame2*Table1*List_Tree2" (list "Solution|Run Calculation"))')
+setup1.SendCommand(Command='(cx-gui-do cx-set-list-tree-selections "NavigationPane*Frame2*Table1*List_Tree2" (list "Solution|Run Calculation"))(cx-gui-do cx-activate-item "NavigationPane*Frame2*Table1*List_Tree2")')
+setup1.SendCommand(Command='(cx-gui-do cx-set-list-tree-selections "NavigationPane*Frame2*Table1*List_Tree2" (list "Solution|Run Calculation"))(cx-gui-do cx-set-integer-entry "Run Calculation*Table1*Table3(Parameters)*Table1*Table1*IntegerEntry1(Number of Iterations)" 10)(cx-gui-do cx-activate-item "Run Calculation*Table1*Table3(Parameters)*Table1*Table1*IntegerEntry1(Number of Iterations)")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "Run Calculation*Table1*Table6(Solution Advancement)*Table1*PushButton4(Calculate)")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "Information*OK")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*ExportSubMenu*Case...")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*ExportSubMenu*Data...")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*ExportSubMenu*Solution Data...")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "Export*PanelButtons*PushButton2(Cancel)")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*ExportSubMenu*Case...")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*WriteSubMenu*Start Journal...")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*WriteSubMenu*Start Transcript...")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "Ribbon*Frame1*Frame2(Domain)*Table1*Table3(Mesh)*PushButton2(Info)")')
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*ExportSubMenu*Solution Data...")')
+setup1.SendCommand(Command="(cx-gui-do cx-set-list-selections \"Export*Table1*Table2*Table3*List1(Surfaces)\" '( 0))(cx-gui-do cx-activate-item \"Export*Table1*Table2*Table3*List1(Surfaces)\")(cx-gui-do cx-set-list-selections \"Export*Table1*Table2*Table4*List1(Quantities)\" '( 29))(cx-gui-do cx-activate-item \"Export*Table1*Table2*Table4*List1(Quantities)\")(cx-gui-do cx-set-list-selections \"Export*Table1*Table2*Table4*List1(Quantities)\" '())(cx-gui-do cx-activate-item \"Export*Table1*Table2*Table4*List1(Quantities)\")(cx-gui-do cx-set-list-selections \"Export*Table1*Table2*Table4*List1(Quantities)\" '( 29))(cx-gui-do cx-activate-item \"Export*Table1*Table2*Table4*List1(Quantities)\")(cx-gui-do cx-set-list-selections \"Export*Table1*Table2*Table4*List1(Quantities)\" '( 29 3))(cx-gui-do cx-activate-item \"Export*Table1*Table2*Table4*List1(Quantities)\")(cx-gui-do cx-activate-item \"Export*PanelButtons*PushButton2(Cancel)\")")
+results1 = system1.GetContainer(ComponentName="Results")
+results1.Edit()
+setup1.SendCommand(Command='(cx-gui-do cx-activate-item "MenuBar*FileMenu*Close Fluent")')
+results1.SendCommand(Command="""VIEW:View 1
+  Light Angle = 50, 110
+END
+
+VIEW:View 2
+  Light Angle = 50, 110
+END
+
+VIEW:View 3
+  Light Angle = 50, 110
+END
+
+VIEW:View 4
+  Light Angle = 50, 110
+END
+
+> update
+EXPORT:
+ANSYS Export Data = Element Heat Flux
+ANSYS File Format = ANSYS
+ANSYS Reference Temperature = 0.0 [K]
+ANSYS Specify Reference Temperature = Off
+ANSYS Supplemental HTC = 0.0 [W m^-2 K^-1]
+Additional Variable List =  
+BC Profile Type = Inlet Velocity
+CSV Type = CSV
+Case Name = Case FFF 1
+Export Connectivity = Off
+Export Coord Frame = Global
+Export File = C:\\Users\\rscha\\Documents\\SS 26\\Case Studies Turbulence\\Turbo rans\\Periodic hill\\fluent_periodic_hill_bo\\runs\\fluent_export_iter_0001.csv
+Export Geometry = On
+Export Location Aliases = 
+Export Node Numbers = Off
+Export Null Data = On
+Export Type = Generic
+Export Units System = Current
+Export Variable Type = Current
+External Export Data = None
+Include File Information = Off
+Include Header = On
+Location = inlet
+Location List = inlet
+Null Token = null
+Overwrite = On
+Precision = 8
+Separator = \", \"
+Spatial Variables = X,Y,Z
+Variable List = Pressure
+Vector Brackets = ()
+Vector Display = Scalar
+END
+>export""")
+Save(Overwrite=True)
