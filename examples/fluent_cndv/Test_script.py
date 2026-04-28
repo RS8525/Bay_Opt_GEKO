@@ -13,15 +13,16 @@ from turborans.utilities.json_io import load_json
 def setCoeff(coeff):
     with open(fl.journal_file,'r') as txt:
         text=txt.readlines()
-        text[25] = f'setup1.SendCommand(Command="(cx-gui-do cx-set-toggle-button2 \\"Viscous Model*Table1*ToggleBox7(k-omega Model)*GEKO\\" #t)(cx-gui-do cx-activate-item \\"Viscous Model*Table1*ToggleBox7(k-omega Model)*GEKO\\")(cx-gui-do cx-set-real-entry-list \\"Viscous Model*Table1*ToggleBox12(GEKO Options)*RealEntry3\\" \'( {coeff["csep"]}))")\n'
-        text[27] = f'setup1.SendCommand(Command="(cx-gui-do cx-set-real-entry-list \\"Viscous Model*Table1*ToggleBox12(GEKO Options)*RealEntry6\\" \'( {coeff["cnw"]}))")\n'
-         
+        text[25] = f'setup1.SendCommand(Command="/define/models/viscous/geko-options/csep {coeff["csep"]}")\n'
+        #text[25] = f'setup1.SendCommand(Command="(cx-gui-do cx-set-toggle-button2 \\"Viscous Model*Table1*ToggleBox7(k-omega Model)*GEKO\\" #t)(cx-gui-do cx-activate-item \\"Viscous Model*Table1*ToggleBox7(k-omega Model)*GEKO\\")(cx-gui-do cx-set-real-entry-list \\"Viscous Model*Table1*ToggleBox12(GEKO Options)*RealEntry3\\" \'( {coeff["csep"]}))")\n'
+        #text[27] = f'setup1.SendCommand(Command="(cx-gui-do cx-set-real-entry-list \\"Viscous Model*Table1*ToggleBox12(GEKO Options)*RealEntry6\\" \'( {coeff["cnw"]}))")\n'
+        text[27] = f'setup1.SendCommand(Command="(cx-gui-do cx-set-real-entry-list \\"Viscous Model*Table1*ToggleBox12(GEKO Options)*RealEntry6\\" \'( 0.5))")\n'
         with open(fl.journal_file,'w') as txt:
             txt.writelines(text)
     
 
 def Run():
-    subprocess.run([f"C:/Program Files/ANSYS Inc/v232/Framework/bin/Win64/RunWB2.exe", "-B", "-R" f"{fl.journal_file}"])
+    subprocess.run([fr"C:\Program Files\ANSYS Inc\ANSYS Student\v261\Framework\bin\Win64\RunWB2.exe", "-B", "-R", f"{fl.journal_file}"])
 
 def run_coeff(coeff:dict):
     setCoeff(coeff)

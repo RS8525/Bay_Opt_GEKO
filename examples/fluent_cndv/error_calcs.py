@@ -38,16 +38,25 @@ plt.rcParams.update(params)
 
 
 def getDNSdata(FileName):
-    getdata = np.genfromtxt(FileName, dtype = None, skip_header = 26)
-    x_dns = getdata[:,0]
-    cp_dns= (getdata[:,4]) - getdata[-1,4]
-    return x_dns, cp_dns
+    getdata = np.genfromtxt(FileName, dtype=float, skip_header=1, delimiter=",")
+
+    x_dns = getdata[:, 1]
+    p_dns = getdata[:, 9]
+
+    cp_dns = p_dns - p_dns[-1]
+
+    inds = x_dns.argsort()
+    return x_dns[inds], cp_dns[inds]
 
 
 def getSimData(FileName):
-    getdata = np.genfromtxt(FileName, dtype=None, skip_header=6, delimiter=",")
-    x_sim = getdata[:, 0]
-    cp_sim = (getdata[:,3] - getdata[610, 3])/0.4 #Umax value changed
+    getdata = np.genfromtxt(FileName, dtype=float, skip_header=1, delimiter=",")
+
+    x_sim = getdata[:, 1]
+    p_sim = getdata[:, 7]
+
+    cp_sim = p_sim - p_sim[-1]
+
     inds = x_sim.argsort()
     return x_sim[inds], cp_sim[inds]
 
@@ -56,12 +65,12 @@ def objective(current_coef):
     
     x_dns, cp_dns = getDNSdata(fl.dns)
     x_sim, cp_sim = getSimData(fl.sim)
-    inds = [250, 350, 500, 560, 640, 770, 980, 1200, 1500, 1700]
+    inds = np.linspace(0, len(x_dns)-1, 20, dtype=int)
     x_new = x_dns[inds]
     #cp resampled
     cp_sim_resampled = np.interp(x_new, x_sim, cp_sim)
     cp_dns_resampled = cp_dns[inds]
-    obj_value = gedcp(field_sim_mapped_dict = {"cp": cp_sim_resampled}, field_ref_dict = {"cp": cp_dns_resampled}, coef_default_dict = {"csep": 1.75, "cnw": 0.5}, coef_dict = current_coef, lda_dict = {'coef': 0.5})
+    obj_value = gedcp(field_sim_mapped_dict = {"cp": cp_sim_resampled}, field_ref_dict = {"cp": cp_dns_resampled}, coef_default_dict = {"csep": 1.75}, coef_dict = current_coef, lda_dict = {'coef': 0.5})
     return obj_value
 
 
