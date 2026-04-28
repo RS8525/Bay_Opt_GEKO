@@ -10,7 +10,7 @@ from error_calcs import objective
 import file_locations as fl
 
 
-N_RUNS = 2
+N_RUNS = 10
 
 opt = optimizer(
     turborans_directory=fl.tuner,
