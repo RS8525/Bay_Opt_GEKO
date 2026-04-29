@@ -169,6 +169,7 @@ class optimizer():
                     }
         """
         
+        self.settings = self.__class__.settings.copy()
         self.coeffs = coeffs
         self.directory = turborans_directory
 

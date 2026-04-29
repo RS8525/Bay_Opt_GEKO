@@ -10,7 +10,7 @@ tuner = r"C:\Users\Goncalo\Desktop\TUM\CS\rep\Bay_Opt_GEKO\examples\fluent_cndv\
 figs = r"C:\Users\Goncalo\Desktop\TUM\CS\graficos"
 
 #dns file location
-dns = r"C:\Users\Goncalo\Desktop\TUM\CS\PeriodicHillGeometry_fakeDNS"
+dns = r"C:\Users\Goncalo\Desktop\TUM\CS\PeriodicHillGeometry_fakeDNS.csv"
 
 #sim data location 
 sim = r"C:\Users\Goncalo\Desktop\TUM\CS\Sim\sim.csv"

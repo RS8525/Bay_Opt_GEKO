@@ -30,7 +30,7 @@ def run_case(csep=1.75, n_iter=200):
     )
 
     solver.exit()
-    time.sleep(20)
+    time.sleep(30)
 
 
 if __name__ == "__main__":

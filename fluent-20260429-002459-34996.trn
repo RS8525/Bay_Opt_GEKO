@@ -1,0 +1,26 @@
+Auto-Transcript Start Time:  00:24:59, 29 Apr 2026 Hora de Verão da Europa Oeste 
+Current Directory: "C:\Users\Goncalo\Desktop\TUM\CS\rep\Bay_Opt_GEKO"
+Information: The server has started and is running.
+
+              Welcome to ANSYS Fluent 2026 R1
+
+              Copyright 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+              Unauthorized use, distribution or duplication is prohibited.
+              This product is subject to U.S. laws governing export and re-export.
+              For full Legal Notice, see documentation.
+
+Build Time: Feb  2 2026 16:27:16 EST  Build Id: 10262  
+ 
+Connected License Server List:	<Non FlexNet Publisher License Server (FNPLS)>
+
+     --------------------------------------------------------------
+     This is a student version of ANSYS FLUENT. Usage of this product
+     license is limited to the terms and conditions specified in your ANSYS
+     license form, additional terms section.
+     --------------------------------------------------------------
+Host spawning Node 0 on machine "DESKTOP-CLNF80J" (win64).
+Host waiting for connection from Node 0 at 127.0.0.1:62722 
+
+Node 0 connecting to the Host ... connection established.
+
+Unable to spawn node: license not available.

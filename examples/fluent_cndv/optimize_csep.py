@@ -1,7 +1,6 @@
 import sys
 
 sys.path.append(r"C:\Users\Goncalo\Desktop\TUM\CS\rep\Bay_Opt_GEKO")
-sys.path.append(r"C:\Users\Goncalo\Desktop\TUM\CS\rep\turbo-rans")
 
 from turborans.bayes_io import optimizer
 from turborans.utilities.json_io import load_json
