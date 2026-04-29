@@ -1,0 +1,8 @@
+numpy
+bayesian-optimization==3.2.1
+scipy
+scikit-learn
+pandas
+matplotlib
+pyvista
+ansys-fluent-core
