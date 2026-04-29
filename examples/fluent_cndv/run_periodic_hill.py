@@ -28,7 +28,7 @@ def run_case(csep=1.75, n_iter=200):
     solver.solution.run_calculation.iterate(iter_count=n_iter)
 
     solver.scheme_eval.scheme_eval(
-        f'(ti-menu-load-string "/file/export/ascii {RESULTS_DIR}/sim.csv surface () yes pressure x-velocity y-velocity turb-kinetic-energy turb-diss-rate ()")'
+        f'(ti-menu-load-string "/file/export/ascii \\"{RESULTS_DIR}/sim.csv\\" surface () yes pressure x-velocity y-velocity turb-kinetic-energy turb-diss-rate ()")'
     )
 
     solver.settings.file.write_case_data(

@@ -1,6 +1,8 @@
 import sys
+import os
 
-sys.path.append("../../")
+# Add directorys to path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from turborans.bayes_io import optimizer
 from turborans.utilities.json_io import load_json

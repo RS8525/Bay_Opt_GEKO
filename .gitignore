@@ -147,3 +147,5 @@ Ansys_projects/ansys_test.py
 #Ignore run logs
 *.trn
 *.bat
+
+examples\fluent_cndv\final_run_history.json
