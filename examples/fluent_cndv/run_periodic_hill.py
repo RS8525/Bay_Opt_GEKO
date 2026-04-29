@@ -2,6 +2,7 @@ import os
 import time
 import ansys.fluent.core as pyfluent
 
+# Define paths a bit cryptic but ANSYS seems to have issues with backslashes in paths, so we replace them with forward slashes
 RESULTS_DIR = os.path.join(os.path.dirname(__file__), "results").replace("\\", "/")
 CASE_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Ansys_projects", "PeriodicHillGeometry_2d.cas.h5")).replace("\\", "/")
 
