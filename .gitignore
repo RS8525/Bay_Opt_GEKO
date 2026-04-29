@@ -136,3 +136,6 @@ pyfoamtesting
 env_turborans
 *__pycache__*
 .vscode
+
+# Ignore test scripts
+Ansys_projects/ansys_test.py
