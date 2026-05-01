@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Results
+results/
+examples/fluent_cndv/results/
+
 # C extensions
 *.so
 
@@ -136,3 +140,12 @@ pyfoamtesting
 env_turborans
 *__pycache__*
 .vscode
+
+#test scripts
+Ansys_projects/ansys_test.py
+
+#Ignore run logs
+*.trn
+*.bat
+
+examples\fluent_cndv\final_run_history.json

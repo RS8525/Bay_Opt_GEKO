@@ -1,9 +1,14 @@
+import os
 import time
 import ansys.fluent.core as pyfluent
 
-CASE_BASE = r"C:\Users\Goncalo\Desktop\TUM\CS\PeriodicHillGeometry_2d.cas.h5"
+# Define paths a bit cryptic but ANSYS seems to have issues with backslashes in paths, so we replace them with forward slashes
+RESULTS_DIR = os.path.join(os.path.dirname(__file__), "results").replace("\\", "/")
+CASE_BASE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "Ansys_projects", "PeriodicHillGeometry_2d.cas.h5")).replace("\\", "/")
 
 def run_case(csep=1.75, n_iter=200):
+    os.makedirs(RESULTS_DIR, exist_ok=True)
+
 
     solver = pyfluent.launch_fluent(
         mode="solver",
@@ -12,7 +17,8 @@ def run_case(csep=1.75, n_iter=200):
         dimension=2
     )
 
-    solver.file.read_case(file_name=CASE_BASE)
+    # Use settings.file to avoid deprecation warnings
+    solver.settings.file.read_case(file_name=CASE_BASE)
 
     solver.scheme_eval.scheme_eval(
         f'(ti-menu-load-string "/define/models/viscous/geko-options/csep\\n{csep}\\n")'
@@ -22,11 +28,11 @@ def run_case(csep=1.75, n_iter=200):
     solver.solution.run_calculation.iterate(iter_count=n_iter)
 
     solver.scheme_eval.scheme_eval(
-        r'(ti-menu-load-string "/file/export/ascii C:\Users\Goncalo\Desktop\TUM\CS\Sim\sim.csv surface () yes pressure x-velocity y-velocity turb-kinetic-energy turb-diss-rate ()")'
+        f'(ti-menu-load-string "/file/export/ascii \\"{RESULTS_DIR}/sim.csv\\" surface () yes pressure x-velocity y-velocity turb-kinetic-energy turb-diss-rate ()")'
     )
 
-    solver.file.write_case_data(
-        file_name=rf"C:\Users\Goncalo\Desktop\TUM\CS\run_csep_{csep}.cas.h5"
+    solver.settings.file.write_case_data(
+        file_name=rf"{RESULTS_DIR}/run_csep_{csep}.cas.h5"
     )
 
     solver.exit()

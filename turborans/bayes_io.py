@@ -270,12 +270,14 @@ class optimizer():
         if self.iter < 5: 
             raise ValueError("Bayesian optimizer should not be run without at least 5 initial samples")
 
+        # Re-set acquisition function in case settings changed dynamically
         acq_function = _make_acquisition(
             kind=self.settings['bo_utility_kind'],
             kappa=self.settings['bo_kappa'],
             xi=self.settings['bo_xi'],
         )
-        return self.bayesian_optimizer.suggest(acq_function)
+        self.bayesian_optimizer._acquisition_function = acq_function
+        return self.bayesian_optimizer.suggest()
 
     def suggest(self, mode=None):
         """Primary suggestion I/O method."""
@@ -362,11 +364,17 @@ class optimizer():
         self.database['target'].append(score)
 
     def _get_bayesian_optimizer(self):
+        acq_function = _make_acquisition(
+            kind=self.settings['bo_utility_kind'],
+            kappa=self.settings['bo_kappa'],
+            xi=self.settings['bo_xi'],
+        )
         self.bayesian_optimizer = get_optimizer(
             coeff_bounds=self.coeffs['bounds'],
             relative_lengthscale=self.settings['kernel_relative_lengthscale'],
             relative_lengthscale_bounds=self.settings['kernel_relative_lengthscale_bounds'],
             nu=self.settings['kernel_nu'],
-            random_state=self.settings['random_state']
+            random_state=self.settings['random_state'],
+            acquisition_function=acq_function
         )
         self._condition_bayesian_optimizer()
